@@ -101,7 +101,7 @@ async fn main() {
             }
 
             let app_config = parse_json(&cfg).unwrap();
-            let theme: String =
+            let mut theme: String =
                 extract_value_str(&get_field_from_cfg(&app_config, "theme").unwrap());
 
             let port_sv: u16 =
@@ -110,9 +110,18 @@ async fn main() {
             let port_ws: u16 =
                 extract_value_u16(&get_field_from_cfg(&app_config, "port_ws").unwrap());
 
-            let server = warp::get().and(warp::fs::dir(
-                themes.join(Path::new(&theme))
-            ));
+            // Check if the theme they're looking for exists. If not, throw an error.
+            if !themes.join(Path::new(&theme)).exists() {
+                if &theme != "default" && themes.join(Path::new("default")).exists() {
+                    eprintln!("theme {} not found, using default", theme);
+                    theme = "default".to_string();
+                } else {
+                    eprintln!("default theme not found, exiting...");
+                    return;
+                }
+            }
+
+            let server = warp::get().and(warp::fs::dir(themes.join(Path::new(&theme))));
 
             tokio::spawn(async move {
                 warp::serve(server)
