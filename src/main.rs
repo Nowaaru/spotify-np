@@ -100,7 +100,7 @@ async fn main() {
     if !cfg.exists() {
         std::fs::File::create(&cfg)
             .unwrap()
-            .write_all(cfg_defaults.clone().to_string().as_bytes())
+            .write_all(serde_json::to_string_pretty(&cfg_defaults.clone()).unwrap().as_bytes())
             .unwrap();
     }
 
