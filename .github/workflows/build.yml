@@ -60,5 +60,6 @@ jobs:
             prerelease: false
             draft: true
             automatic_release_tag: v${{ env.RELEASE_VERSION }}
-            files: *.zip
+            files: |
+              *.zip
         
