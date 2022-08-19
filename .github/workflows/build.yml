@@ -23,7 +23,7 @@ jobs:
             override: true
 
         - name: Install random bullshit
-          run: sudo pat install libssl-dev librust-openssl-dev pgk-config build-essential
+          run: sudo apt install libssl-dev librust-openssl-dev pgk-config build-essential
 
         - uses: actions-rs/cargo@v1
           with:
