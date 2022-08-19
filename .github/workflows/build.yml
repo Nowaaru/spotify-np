@@ -1,7 +1,4 @@
-on:
-  push:
-    tags:
-      - "v*"
+on: push
 
 jobs:
   build:
@@ -39,7 +36,7 @@ jobs:
           uses: vimtor/action-zip@v1
           with:
             files: package/themes package/config.json README.md
-            dest: spotify-np-v${{ env.RELEASE_VERSION }}.${{ matrix.target }}.zip
+            dest: spotify-np-latest.${{ matrix.target }}.zip
             
         - name: "Output after Zip for testing purpsoes."
         - run: ls
@@ -50,6 +47,6 @@ jobs:
             repo_token: "${{ secrets.GH_TOKEN }}"
             prerelease: false
             draft: true
-            automatic_release_tag: v${{ env.RELEASE_VERSION }}
-            files: spotify-np-v${{ env.RELEASE_VERSION }}.${{ matrix.target }}.zip
+            automatic_release_tag: "latest"
+            files: spotify-np-latest.${{ matrix.target }}.zip
         
