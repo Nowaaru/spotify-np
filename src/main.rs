@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use futures::{FutureExt, SinkExt, StreamExt};
+use futures::{SinkExt};
 use spotify_info::{SpotifyEvent, SpotifyListener, TrackState};
 use warp::{
     ws::{Message, WebSocket},
@@ -100,7 +100,7 @@ async fn main() {
             if !cfg.exists() {
                 std::fs::File::create(&cfg)
                     .unwrap()
-                    .write_all(&cfg_defaults.clone().to_string().as_bytes())
+                    .write_all(cfg_defaults.clone().to_string().as_bytes())
                     .unwrap();
             }
 
@@ -111,7 +111,7 @@ async fn main() {
 
             let port_sv: u16 = extract_value_u16(
                 &get_field_from_cfg(&app_config, "port_sv")
-                    .unwrap_or(get_field_from_cfg(&cfg_defaults, "port_sv").unwrap()),
+                    .unwrap_or_else(|_| get_field_from_cfg(&cfg_defaults, "port_sv").unwrap()),
             );
 
             let port_ws: u16 =
@@ -119,7 +119,7 @@ async fn main() {
 
             let errors_ws: bool = extract_value_bool(
                 &get_field_from_cfg(&app_config, "errors_ws")
-                    .unwrap_or(get_field_from_cfg(&cfg_defaults, "errors_ws").unwrap()),
+                    .unwrap_or_else(|_| get_field_from_cfg(&cfg_defaults, "errors_ws").unwrap()),
             );
 
             // Check if the theme they're looking for exists. If not, throw an error.
@@ -215,7 +215,7 @@ async fn main() {
                     ws.on_upgrade(move |mut websocket| async move {
                         while let Ok(v) = rx.recv().await {
                             if let Err(e) = ws_sendmessage(&mut websocket, v).await {
-                                if (errors_ws) {
+                                if errors_ws {
                                     eprintln!("{}", e);
                                 }
                                 break;
