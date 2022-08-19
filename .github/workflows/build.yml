@@ -22,6 +22,9 @@ jobs:
             target: ${{ matrix.target }}
             override: true
 
+        - name: Install OpenSSL libraries
+          run: sudo apt-get install pkg-config libssl-dev
+
         - uses: actions-rs/cargo@v1
           with:
             use-cross: true
