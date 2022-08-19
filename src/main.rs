@@ -224,8 +224,6 @@ async fn main() {
                             eprintln!("An error occured when sending a message to the websocket server: {}", err);
                         }
                     }
-
-                    _ => {} // We don't need any extra functionality outside of these two for right now.
                 }
             }
         }
