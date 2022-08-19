@@ -189,6 +189,28 @@ async fn main() {
                         }
                     }
 
+                    SpotifyEvent::StateChanged(state) => {
+                        let json = serde_json::json!({
+                            "event": "state",
+                            "state": match state {
+                                TrackState::Playing => {
+                                    "playing"
+                                }
+                                TrackState::Paused => {
+                                    "paused"
+                                }
+                                TrackState::Stopped => {
+                                    "stopped"
+                                }
+                            }
+                        })
+                        .to_string();
+
+                        if let Err(err) = tx.send(json) {
+                            eprintln!("An error occured when sending a message to the websocket server: {}", err);
+                        }
+                    }
+
                     SpotifyEvent::ProgressChanged(progress) => {
                         let json = serde_json::json!({
                             "event": "progress",
