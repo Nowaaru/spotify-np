@@ -28,6 +28,7 @@ jobs:
             command: build
             args: --release --target=${{ matrix.target }}
         - name: Zip Product                 
+        - uses: vimtor/action-zip@v1
           with:
             files: package/themes package/config.json README.md
             dest: spotify-np-v${{ env.RELEASE_VERSION }}.${{ matrix.target }}.zip
