@@ -1,5 +1,8 @@
 /target
 /*.lock
 
+/themes
+/config.json
+
 src/themes
 src/*.json
