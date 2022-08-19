@@ -1,2 +1,5 @@
 /target
 /*.lock
+
+src/themes
+src/*.json
