@@ -90,8 +90,8 @@ async fn main() {
             let cfg_defaults = serde_json::json!( {
                 "token": "",
                 "theme": "default",
-                "port_sv": 1273,
-                "port_ws": 1274,
+                "port_sv": "1273",
+                "port_ws": "1274",
                 "errors_ws": false,
             });
 
