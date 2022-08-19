@@ -14,14 +14,23 @@ jobs:
             - x86_64-unknown-linux-gnu	
             - aarch64-unknown-linux-gnu	
       steps:
-        - name: Checkout
+        - name: Checkout        
           uses: actions/checkout@v3
 
+        - name: Toolchain
         - uses: actions-rs/toolchain@v1
           with:
             toolchain: stable
             target: ${{ matrix.target }}
             override: true
+
+        - name: Node
+        - uses: actions/setup-node@v3
+          with:
+            node-version: 16
+
+        - name: Install TOML
+          run: npm install toml
 
         - name: Install random bullshit
           run: sudo apt install libssl-dev librust-openssl-dev pkg-config build-essential
@@ -39,8 +48,11 @@ jobs:
           uses: vimtor/action-zip@v1
           with:
             files: package/themes package/config.json README.md
-            dest: spotify-np-v${{ env.RELEASE_VERSION }}.${{ matrix.target }}.zip
+            dest: out.${{ matrix.target }}.zip
             
+        - name: Rename artifacts
+          run: node .github/scripts/rename.js
+
         - name: "Output after Zip for testing purpsoes."
           run: ls
         

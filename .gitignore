@@ -6,3 +6,7 @@
 
 src/themes
 src/*.json
+
+package.json
+package-lock.json
+node_modules
