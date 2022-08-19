@@ -11,9 +11,6 @@ use warp::{
     Filter,
 };
 
-extern crate pretty_env_logger;
-#[macro_use]
-extern crate log;
 #[derive(Debug)]
 
 struct AppError {
@@ -81,8 +78,6 @@ async fn ws_sendmessage(ws: &mut WebSocket, msg: String) -> Result<(), AppError>
 
 #[tokio::main]
 async fn main() {
-    pretty_env_logger::init();
-
     // setup filesystem dir n stuffs.
     let base = Path::new("./");
     let themes = base.join(Path::new("themes"));
@@ -100,7 +95,11 @@ async fn main() {
     if !cfg.exists() {
         std::fs::File::create(&cfg)
             .unwrap()
-            .write_all(serde_json::to_string_pretty(&cfg_defaults.clone()).unwrap().as_bytes())
+            .write_all(
+                serde_json::to_string_pretty(&cfg_defaults.clone())
+                    .unwrap()
+                    .as_bytes(),
+            )
             .unwrap();
     }
 
@@ -124,7 +123,7 @@ async fn main() {
 
     // Warn if a dangerous field is used.
     if !errors_ws {
-        warn!("errors_ws is set to false, this is dangerous! if anything goes wrong, please be sure to turn this field back to true before making an issue/pr!");
+        eprintln!("! errors_ws is set to false, this is dangerous! if anything goes wrong, please be sure to turn this field back to true before making an issue/pr!");
     }
 
     // Check if the theme they're looking for exists. If not, throw an error.
@@ -140,7 +139,7 @@ async fn main() {
     let (tx, _rx) = tokio::sync::broadcast::channel::<String>(24);
     let tx2 = tx.clone();
     tokio::spawn(async move {
-        print!("Starting main server...");
+        println!("Starting main server...");
         warp::serve(server)
             .run(SocketAddr::new(
                 IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)),
@@ -160,6 +159,7 @@ async fn main() {
                 match event {
                     SpotifyEvent::TrackChanged(track) => {
                         let json = serde_json::json!({
+                            "event": "track_changed",
                             "track": {
                                 "name": track.title,
                                 "artists": track.artist,
@@ -185,7 +185,7 @@ async fn main() {
                         .to_string();
 
                         if let Err(err) = tx.send(json) {
-                            error!("An error occured when sending a message to the websocket server: {}", err);
+                            eprintln!("An error occured when sending a message to the websocket server: {}", err);
                         }
                     }
 
@@ -199,7 +199,7 @@ async fn main() {
                         .to_string();
 
                         if let Err(err) = tx.send(json) {
-                            error!("An error occured when sending a message to the websocket server: {}", err);
+                            eprintln!("An error occured when sending a message to the websocket server: {}", err);
                         }
                     }
 
@@ -217,7 +217,7 @@ async fn main() {
                 while let Ok(v) = rx.recv().await {
                     if let Err(e) = ws_sendmessage(&mut websocket, v).await {
                         if errors_ws {
-                            error!("{}", e);
+                            eprintln!("{}", e);
                         }
                         break;
                     }
@@ -225,6 +225,6 @@ async fn main() {
             })
         });
 
-    print!("Starting websocket server...");
+    println!("Starting websocket server...");
     warp::serve(routes).run(([127, 0, 0, 1], port_ws)).await;
 }
