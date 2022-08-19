@@ -81,9 +81,8 @@ async fn main() {
     // setup filesystem dir n stuffs.
     {
         let base = Path::new("./");
-        let main = base.join(Path::new("spotify-np"));
-        let themes = main.join(Path::new("themes"));
-        let cfg = main.join(Path::new("config.json"));
+        let themes = base.join(Path::new("themes"));
+        let cfg = base.join(Path::new("config.json"));
 
         let cfg_defaults = serde_json::json!( {
             "theme": "",
