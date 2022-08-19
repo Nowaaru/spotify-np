@@ -424,16 +424,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "hotwatch"
-version = "0.4.6"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "39301670a6f5798b75f36a1b149a379a50df5aa7c71be50f4b41ec6eab445cb8"
-dependencies = [
- "log",
- "notify",
-]
-
-[[package]]
 name = "http"
 version = "0.2.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1213,7 +1203,6 @@ dependencies = [
  "directories",
  "futures",
  "futures-util",
- "hotwatch",
  "notify",
  "reqwest",
  "serde",

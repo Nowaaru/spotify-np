@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use futures::SinkExt;
+use futures::{FutureExt, SinkExt, StreamExt};
 use spotify_info::{SpotifyEvent, SpotifyListener, TrackState};
 use warp::{
     ws::{Message, WebSocket},
@@ -60,6 +60,10 @@ fn extract_value_str(val: &serde_json::Value) -> std::string::String {
     val.as_str().unwrap().to_string()
 }
 
+fn extract_value_bool(val: &serde_json::Value) -> bool {
+    val.as_bool().unwrap()
+}
+
 fn extract_value_u16(val: &serde_json::Value) -> u16 {
     val.as_str().unwrap().parse::<u16>().unwrap()
 }
@@ -67,7 +71,7 @@ fn extract_value_u16(val: &serde_json::Value) -> u16 {
 async fn ws_sendmessage(ws: &mut WebSocket, msg: String) -> Result<(), AppError> {
     let msg = Message::text(msg);
     if let Err(e) = ws.send(msg).await {
-        return Err(AppError::new(format!("unable to send message: {}", e)));
+        return Err(AppError::new(format!("unable to send message - {}", e)));
     }
     Ok(())
 }
@@ -82,33 +86,41 @@ async fn main() {
             let main = local_app_data.join(Path::new("spotify-np"));
             let themes = main.join(Path::new("themes"));
             let cfg = main.join(Path::new("config.json"));
+
+            let cfg_defaults = serde_json::json!( {
+                "token": "",
+                "theme": "default",
+                "port_sv": 1273,
+                "port_ws": 1274,
+                "errors_ws": false,
+            });
+
             std::fs::create_dir_all(&themes).unwrap();
 
             if !cfg.exists() {
                 std::fs::File::create(&cfg)
                     .unwrap()
-                    .write_all(
-                        serde_json::json!( {
-                            "token": "",
-                            "theme": "default",
-                            "port_sv": "1273",
-                            "port_ws": "1274"
-                        })
-                        .to_string()
-                        .as_bytes(),
-                    )
+                    .write_all(&cfg_defaults.clone().to_string().as_bytes())
                     .unwrap();
             }
 
             let app_config = parse_json(&cfg).unwrap();
             let mut theme: String =
                 extract_value_str(&get_field_from_cfg(&app_config, "theme").unwrap());
+            // Theme is the only field that does not have a default as it is handled explicitly somewher eelse
 
-            let port_sv: u16 =
-                extract_value_u16(&get_field_from_cfg(&app_config, "port_sv").unwrap());
+            let port_sv: u16 = extract_value_u16(
+                &get_field_from_cfg(&app_config, "port_sv")
+                    .unwrap_or(get_field_from_cfg(&cfg_defaults, "port_sv").unwrap()),
+            );
 
             let port_ws: u16 =
                 extract_value_u16(&get_field_from_cfg(&app_config, "port_ws").unwrap());
+
+            let errors_ws: bool = extract_value_bool(
+                &get_field_from_cfg(&app_config, "errors_ws")
+                    .unwrap_or(get_field_from_cfg(&cfg_defaults, "errors_ws").unwrap()),
+            );
 
             // Check if the theme they're looking for exists. If not, throw an error.
             if !themes.join(Path::new(&theme)).exists() {
@@ -121,8 +133,12 @@ async fn main() {
                 }
             }
 
-            let server = warp::get().and(warp::fs::dir(themes.join(Path::new(&theme))));
+            let server = warp::get()
+                .and(warp::fs::dir(themes.join(Path::new(&theme))))
+                .or(warp::path("config").and(warp::fs::file(cfg)));
 
+            let (tx, _) = tokio::sync::broadcast::channel::<String>(1);
+            let tx2 = tx.clone();
             tokio::spawn(async move {
                 warp::serve(server)
                     .run(SocketAddr::new(
@@ -132,79 +148,77 @@ async fn main() {
                     .await;
             });
 
-            let routes = warp::path::end()
-                // The `ws()` filter will prepare the Websocket handshake.
-                .and(warp::ws())
-                .map(|ws: warp::ws::Ws| {
-                    // And then our closure will be called when it completes...
-                    ws.on_upgrade(|mut websocket| async move {
-                        while let Ok(mut conn) = SpotifyListener::bind_default()
-                            .await
-                            .unwrap()
-                            .get_connection()
-                            .await
-                        {
-                            while let Some(Ok(event)) = conn.next().await {
-                                match event {
-                                    SpotifyEvent::TrackChanged(track) => {
-                                        let websocket_send_result = ws_sendmessage(
-                                            &mut websocket,
-                                            serde_json::json!({
-                                                "track": {
-                                                    "name": track.title,
-                                                    "artists": track.artist,
-                                                    "length": track.duration,
-                                                    "uri": track.uri,
-                                                    "uid": track.uid,
-                                                    "background": track.background_url,
-                                                    "cover": track.cover_url,
-                                                    "album": track.album,
-                                                    "status": match track.state {
-                                                        TrackState::Playing => {
-                                                            "playing"
-                                                        }
-                                                        TrackState::Paused => {
-                                                            "paused"
-                                                        }
-                                                        TrackState::Stopped => {
-                                                            "stopped"
-                                                        }
-                                                    }
-                                                }
-                                            })
-                                            .to_string(),
-                                        );
-
-                                        if let Err(err) = websocket_send_result.await {
-                                            eprintln!(
-                                                "Error sending message to WebSocket: {:?}",
-                                                err
-                                            );
+            tokio::spawn(async move {
+                while let Ok(mut conn) = SpotifyListener::bind_default()
+                    .await
+                    .unwrap()
+                    .get_connection()
+                    .await
+                {
+                    while let Some(Ok(event)) = conn.next().await {
+                        match event {
+                            SpotifyEvent::TrackChanged(track) => {
+                                let json = serde_json::json!({
+                                    "track": {
+                                        "name": track.title,
+                                        "artists": track.artist,
+                                        "length": track.duration,
+                                        "uri": track.uri,
+                                        "uid": track.uid,
+                                        "background": track.background_url,
+                                        "cover": track.cover_url,
+                                        "album": track.album,
+                                        "status": match track.state {
+                                            TrackState::Playing => {
+                                                "playing"
+                                            }
+                                            TrackState::Paused => {
+                                                "paused"
+                                            }
+                                            TrackState::Stopped => {
+                                                "stopped"
+                                            }
                                         }
                                     }
+                                })
+                                .to_string();
 
-                                    SpotifyEvent::ProgressChanged(progress) => {
-                                        let websocket_send_result = ws_sendmessage(
-                                            &mut websocket,
-                                            serde_json::json!({
-                                                "event": "progress",
-                                                "progress": {
-                                                    "position": progress,
-                                                }
-                                            })
-                                            .to_string(),
-                                        );
-
-                                        if let Err(err) = websocket_send_result.await {
-                                            eprintln!(
-                                                "Error sending message to WebSocket: {:?}",
-                                                err
-                                            );
-                                        }
-                                    }
-
-                                    _ => {} // We don't need any extra functionality outside of these two for right now.
+                                if let Err(err) = tx.send(json) {
+                                    eprintln!("An error occured when sending a message to the websocket server: {}", err);
                                 }
+                            }
+
+                            SpotifyEvent::ProgressChanged(progress) => {
+                                let json = serde_json::json!({
+                                    "event": "progress",
+                                    "progress": {
+                                        "position": progress,
+                                    }
+                                })
+                                .to_string();
+
+                                if let Err(err) = tx.send(json) {
+                                    eprintln!("An error occured when sending a message to the websocket server: {}", err);
+                                }
+                            }
+
+                            _ => {} // We don't need any extra functionality outside of these two for right now.
+                        }
+                    }
+                }
+            });
+
+            let routes = warp::path::end()
+                .and(warp::ws())
+                .map(move |ws: warp::ws::Ws| {
+                    let mut rx = tx2.subscribe();
+                    ws.on_upgrade(move |mut websocket| async move {
+                        while let Ok(v) = rx.recv().await {
+                            if let Err(e) = ws_sendmessage(&mut websocket, v).await {
+                                if (errors_ws) {
+                                    eprintln!("{}", e);
+                                }
+                                break;
                             }
                         }
                     })
