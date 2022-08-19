@@ -1,0 +1,142 @@
+<html>
+
+<head>
+    <title>
+        spotify-np: default
+    </title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/reconnecting-websocket/1.0.0/reconnecting-websocket.min.js"
+        integrity="sha512-B4skI5FiLurS86aioJx9VfozI1wjqrn6aTdJH+YQUmCZum/ZibPBTX55k5d9XM6EsKePDInkLVrN7vPmJxc1qA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:ital@0;1&display=swap');
+
+        #main {
+            position: relative;
+            top: -125px;
+            display: flex;
+            flex-direction: column;
+            flex-wrap: nowrap;
+
+            width: fit-content;
+            height: 100px;
+            background-color: rgb(17, 17, 17);
+            border-radius: 8px;
+            padding: 12px;
+            box-sizing: border-box;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        #img-container {
+            position: relative;
+            display: flex;
+
+            vertical-align: middle;
+            justify-self: center;
+        }
+
+        #background {
+            position: absolute;
+            max-width: 100%;
+            transform: translateY(-50%);
+            box-shadow: 0px 0px 16px 16px rgb(17, 17, 17) inset;
+            z-index: -1;
+            filter: brightness(0.45) blur(2px);
+        }
+
+        .text {
+            color: white;
+            text-shadow: black;
+            font-family: 'Robot', sans-serif;
+        }
+
+        #title {
+            font-size: 24px;
+        }
+
+        #artists {
+            font-size: 16px;
+        }
+
+        #album {
+            position: absolute;
+            font-size: 12px;
+            bottom: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main">
+        <div id="img-container">
+            <img id="background" src="https://i.scdn.co/image/ab67616d0000b273cfc0e077f25956dd081f2a8a" />
+        </div>
+        <span id="title" class="text">
+            Lavender
+        </span>
+        <span id="artists" class="text">
+            Kill Bill: The Rapper, Rav
+        </span>
+        <span id="album" class="text">
+            Beneath the Toxic Jungle
+        </span>
+    </div>
+    <script>
+        let config;
+        $.getJSON("config", (data) => {
+            if (!data)
+                document.getElementsByClassName("body")[0].innerHTML = `<span style="color: red">Failed to load 'config.json.'</span>`;
+
+            let dockPlayer = (isDocked) => {
+                $("#main").animate(isDocked ? {top: -125} : {top: 0}, 1000, () => {
+                    console.log(isDocked ? "Finished docking!" : "Done.");
+                });
+            }
+            // Try out websockets.
+            const reconnectingSocket = new ReconnectingWebSocket(`ws://127.0.0.1:${data.port_ws}`);
+            let track_spotted = false;
+            reconnectingSocket.onmessage = ({data}) => {
+                let rest = JSON.parse(data);
+
+                switch (rest.event) {
+                    case "track":
+                        if (!track_spotted) {
+                            track_spotted = true;
+                        }
+
+                        const {track} = rest;
+
+                        $("#artists")[0].innerText = track.artists.join(', ');
+                        $("#title")[0].innerText = track.name;
+                        $("#background")[0].src = track.cover;
+                        $("#album")[0].innerText = track.album;
+
+                        dockPlayer(false);
+                        break;
+
+                    case "state":
+                        const {state} = rest;
+                        if (track_spotted) {
+                            if (state !== "playing") dockPlayer(true); else dockPlayer(false);
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+
+            };
+
+
+            window.addEventListener("beforeunload", (event) => {
+                reconnectingSocket.close();
+            });
+        });
+    </script>
+</body>
+
+</html>
