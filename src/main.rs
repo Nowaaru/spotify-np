@@ -4,7 +4,7 @@ use std::{
     path::Path,
 };
 
-use futures::{SinkExt};
+use futures::SinkExt;
 use spotify_info::{SpotifyEvent, SpotifyListener, TrackState};
 use warp::{
     ws::{Message, WebSocket},
@@ -140,6 +140,7 @@ async fn main() {
             let (tx, _) = tokio::sync::broadcast::channel::<String>(1);
             let tx2 = tx.clone();
             tokio::spawn(async move {
+                println!("Starting main server...");
                 warp::serve(server)
                     .run(SocketAddr::new(
                         IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)),
@@ -224,6 +225,7 @@ async fn main() {
                     })
                 });
 
+            println!("Starting websocket server...");
             warp::serve(routes).run(([127, 0, 0, 1], port_ws)).await;
         }
         Err(why) => {
