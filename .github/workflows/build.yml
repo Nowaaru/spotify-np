@@ -48,7 +48,7 @@ jobs:
             dest: out.${{ matrix.target }}.zip
             
         - name: Rename artifacts
-          run: node .github/scripts/rename.js
+          run: node .github/scripts/rename.js ${{ matrix.target }}.zip
 
         - name: "Output after Zip for testing purpsoes."
           run: ls
@@ -60,5 +60,5 @@ jobs:
             prerelease: false
             draft: true
             automatic_release_tag: v${{ env.RELEASE_VERSION }}
-            files: spotify-np-v${{ env.RELEASE_VERSION }}.${{ matrix.target }}.zip
+            files: *.zip
         
