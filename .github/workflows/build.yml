@@ -3,7 +3,7 @@ on: push
 jobs:
   build:
       name: Publish
-      runs-on: ubuntu-latest
+      runs-on: windows-latest
       strategy:
         fail-fast: true
         matrix:
@@ -23,7 +23,10 @@ jobs:
             override: true
 
         - name: Install OpenSSL libraries
-          run: sudo apt-get install pkg-config libssl-dev
+          uses: crazy-max/ghaction-chocolatey@v2
+          with:
+            args: install openssl
+          run: set OPENSSL_DIR="C:\Program Files\OpenSSL-Win64"
 
         - uses: actions-rs/cargo@v1
           with:
