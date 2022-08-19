@@ -88,8 +88,7 @@ async fn main() {
             let cfg = main.join(Path::new("config.json"));
 
             let cfg_defaults = serde_json::json!( {
-                "token": "",
-                "theme": "default",
+                "theme": "",
                 "port_sv": "1273",
                 "port_ws": "1274",
                 "errors_ws": false,
@@ -105,9 +104,8 @@ async fn main() {
             }
 
             let app_config = parse_json(&cfg).unwrap();
-            let mut theme: String =
+            let theme: String =
                 extract_value_str(&get_field_from_cfg(&app_config, "theme").unwrap());
-            // Theme is the only field that does not have a default as it is handled explicitly somewher eelse
 
             let port_sv: u16 = extract_value_u16(
                 &get_field_from_cfg(&app_config, "port_sv")
@@ -125,11 +123,7 @@ async fn main() {
             // Check if the theme they're looking for exists. If not, throw an error.
             if !themes.join(Path::new(&theme)).exists() {
                 if &theme != "default" && themes.join(Path::new("default")).exists() {
-                    eprintln!("theme {} not found, using default", theme);
-                    theme = "default".to_string();
-                } else {
-                    eprintln!("default theme not found, exiting...");
-                    return;
+                    panic!("theme {} not found", theme);
                 }
             }
 
