@@ -159,7 +159,7 @@ async fn main() {
                 match event {
                     SpotifyEvent::TrackChanged(track) => {
                         let json = serde_json::json!({
-                            "event": "track_changed",
+                            "event": "track",
                             "track": {
                                 "name": track.title,
                                 "artists": track.artist,
