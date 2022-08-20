@@ -42,7 +42,7 @@ https://user-images.githubusercontent.com/16274568/185728431-8b87076c-2488-4962-
 ### For OBS users...
 
 1. Follow all of the previous steps.
-2. Add a browser source in OBS. Themes and resolutions are found in the [themes repository](https://www.github.com/Nowaaru/spotify-np).
+2. Add a browser source in OBS. Themes and resolutions are found in the [themes repository](https://www.github.com/Nowaaru/spotify-np-themes).
 3. Set the browser source URL to `localhost:1273` - or whatever alternative you've set it to.
 
 -   **DO. NOT. AND I REPEAT. DO NOT** tick the following fields:
