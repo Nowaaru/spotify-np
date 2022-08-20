@@ -45,7 +45,7 @@ jobs:
           uses: vimtor/action-zip@v1
           with:
             files: package/themes package/config.json README.md
-            dest: out.${{ matrix.target }}.zip
+            dest: ${{ matrix.target }}.zip
             
         - name: Rename artifacts
           run: node .github/scripts/rename.js ${{ matrix.target }}.zip
@@ -59,7 +59,7 @@ jobs:
             repo_token: "${{ secrets.GH_TOKEN }}"
             prerelease: false
             draft: true
-            automatic_release_tag: v${{ env.RELEASE_VERSION }}
+            automatic_release_tag: out
             files: |
               *.zip
         
