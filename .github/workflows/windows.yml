@@ -45,14 +45,14 @@ jobs:
       - name: Zip Product                 
         uses: vimtor/action-zip@v1
         with:
-          files: package/ *.exe README.md
+          files: package/ README.md
           dest: ${{ matrix.target }}.zip
           
       - name: Rename artifacts
         run: node .github/scripts/rename.js ${{ matrix.target }}.zip
 
       - name: "Output after Zip for testing purpsoes."
-        run: ls
+        run: dir target/release
 
       - name: Let the dogs out.
         uses: softprops/action-gh-release@v1

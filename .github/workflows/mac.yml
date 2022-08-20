@@ -52,7 +52,7 @@ jobs:
         run: node .github/scripts/rename.js ${{ matrix.target }}.zip
 
       - name: "Output after Zip for testing purpsoes."
-        run: ls
+        run: ls target/release
 
       - name: Let the dogs out.
         uses: softprops/action-gh-release@v1
