@@ -1,4 +1,4 @@
-on: workflow_dispatch
+on: [push, workflow_dispatch]
 
 name: Publish (mac)
 jobs:
@@ -45,7 +45,7 @@ jobs:
       - name: Zip Product                 
         uses: vimtor/action-zip@v1
         with:
-          files: package/themes package/config.json README.md
+          files: package/ README.md
           dest: ${{ matrix.target }}.zip
           
       - name: Rename artifacts
