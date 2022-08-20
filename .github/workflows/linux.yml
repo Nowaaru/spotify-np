@@ -35,7 +35,7 @@ jobs:
         run: npm install toml
 
       - name: Clone from Themes Repository
-        run: git clone https://github.com/Nowaaru/spotify-np-themes.git themes
+        run: git clone https://github.com/Nowaaru/spotify-np-themes.git themes/themes
 
       - name: Build
         run: cargo build --release

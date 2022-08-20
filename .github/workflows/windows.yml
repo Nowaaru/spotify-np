@@ -34,7 +34,7 @@ jobs:
         run: npm install toml
       
       - name: Clone from Themes Repository
-        run: git clone https://github.com/Nowaaru/spotify-np-themes.git themes/
+        run: git clone https://github.com/Nowaaru/spotify-np-themes.git themes/themes
 
       - name: Build
         run: cargo build --release
@@ -42,7 +42,7 @@ jobs:
       - name: Zip Product                 
         uses: vimtor/action-zip@v1
         with:
-          files: README.md target/release/spotify-np.exe package/ themes
+          files: README.md target/release/spotify-np.exe package/ themes/
           dest: ${{ matrix.target }}.zip
           
       - name: Rename artifacts
