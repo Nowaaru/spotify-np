@@ -1,5 +1,6 @@
 on: workflow_dispatch
 
+name: Publish (windows)
 jobs:
   build:
     permissions:
@@ -7,13 +8,12 @@ jobs:
       pull-requests: write
 
     name: Publish
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       fail-fast: true
       matrix:
         target:
-          - x86_64-unknown-linux-gnu	
-          - aarch64-unknown-linux-gnu	
+          - x86_64-pc-windows-msvc
     steps:
       - name: Checkout        
         uses: actions/checkout@v3

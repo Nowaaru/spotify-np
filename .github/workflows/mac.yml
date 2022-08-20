@@ -1,0 +1,66 @@
+on: workflow_dispatch
+
+name: Publish (mac)
+jobs:
+  build:
+    permissions:
+      contents: write
+      pull-requests: write
+
+    name: Publish
+    runs-on: macos-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        target:
+          - x86_64-apple-darwin
+    steps:
+      - name: Checkout        
+        uses: actions/checkout@v3
+
+      - name: Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install TOML
+        run: npm install toml
+
+      - name: Install random bullshit
+        run: sudo apt install libssl-dev librust-openssl-dev pkg-config build-essential
+
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: true
+          command: build
+          args: --release --all-features --target=${{ matrix.target }}
+
+      - name: Set ENV
+        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
+
+      - name: Zip Product                 
+        uses: vimtor/action-zip@v1
+        with:
+          files: package/themes package/config.json README.md
+          dest: ${{ matrix.target }}.zip
+          
+      - name: Rename artifacts
+        run: node .github/scripts/rename.js ${{ matrix.target }}.zip
+
+      - name: "Output after Zip for testing purpsoes."
+        run: ls
+
+      - name: Let the dogs out.
+        uses: softprops/action-gh-release@v1
+        with:
+          draft: true
+          fail_on_unmatched_files: true
+          files: | 
+            *.zip
