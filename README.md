@@ -14,6 +14,17 @@ This application utilizes the Crate [spotify-info](https://crates.io/crates/spot
 
 It's an unfortunate case, but two are obligatory and one of them was the simplest option out of the rest.
 
+<details>
+    <summary> What will I be downloading? </summary>
+    Fear not, young padawan. It's the little box in the bottom-left corner!
+
+    
+
+https://user-images.githubusercontent.com/16274568/185728431-8b87076c-2488-4962-9152-27dbc363f952.mp4
+
+
+</details>
+
 ## Usage
 
 1. As this is program is dependent on Cargo's `spotify_info` crate, head to [this repository](https://github.com/Ricky12Awesome/spotify_info) and follow the instructions to satisfy the Spotify end of the program.
