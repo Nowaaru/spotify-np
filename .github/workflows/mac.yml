@@ -45,7 +45,7 @@ jobs:
       - name: Zip Product                 
         uses: vimtor/action-zip@v1
         with:
-          files: package/ README.md
+          files: package/ *.exe README.md
           dest: ${{ matrix.target }}.zip
           
       - name: Rename artifacts
