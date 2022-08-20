@@ -56,12 +56,12 @@ https://user-images.githubusercontent.com/16274568/185728431-8b87076c-2488-4962-
 <details>
     <summary>Included Themes</summary>
     
-    ## default
-    ![image](https://user-images.githubusercontent.com/16274568/185761257-0e48f397-ae7a-41e7-b221-f608c465061c.png)
-
-    ## bar
-    ![image](https://user-images.githubusercontent.com/16274568/185761196-a9e15296-5b02-4b8a-9732-c9e610877473.png)
-
+    <h2> default </h2>
+    <img src=https://user-images.githubusercontent.com/16274568/185761257-0e48f397-ae7a-41e7-b221-f608c465061c.png />
+    
+    <h2> bar </h2>
+    <img src=https://user-images.githubusercontent.com/16274568/185761196-a9e15296-5b02-4b8a-9732-c9e610877473.png />
+    
 </details>
 <br />
 
