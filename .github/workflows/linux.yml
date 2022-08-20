@@ -34,11 +34,8 @@ jobs:
       - name: Install TOML
         run: npm install toml
 
-      - uses: actions-rs/cargo@v1
-        with:
-          use-cross: true
-          command: build
-          args: --release --all-features --target=${{ matrix.target }}
+      - name: Build
+        run: cargo build --release
 
       - name: Set ENV
         run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
