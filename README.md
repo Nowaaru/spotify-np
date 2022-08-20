@@ -57,16 +57,20 @@ It's an unfortunate case, but two are obligatory and one of them was the simples
 
 ---
 
-<sup>
- <ul>
-<li>
-Hey! Have you ever listened to Kill Bill: The Rapper's <a href="https://open.spotify.com/track/0Tcs9OG5IwiDaEN6gu7Dc9?si=1c345b9d23b146dd">sleeptalking</a>? Give it a whirl! 
-</li>
-<li>
- I originally made this application because I wanted to stream development of my upcoming (or maybe present, depends on when you're reading) manga reader `suwariyomi.rs`, and I wanted to give credit to artists like _`your best friend jippy`_ whilst keeping everything sleek. I also wanted to learn Rust. :crab:
-</li>
-<li>
-  Did you know that I pledged to not listen to music (within sanity, like testing) until I got this project done? It was hard!
-</li>
- </ul>
-</sup>
+<ul>
+    <li>
+        <sup>
+           Hey! Have you ever listened to Kill Bill: The Rapper's <a href="https://open.spotify.com/track/0Tcs9OG5IwiDaEN6gu7Dc9?si=1c345b9d23b146dd">sleeptalking</a>? Give it a whirl! 
+        </sup>
+    </li>
+    <li>
+        <sup>
+         I originally made this application because I wanted to stream development of my upcoming (or maybe present, depends on when you're reading) manga reader `suwariyomi.rs`, and I wanted to give credit to artists like _`your best friend jippy`_ whilst keeping everything sleek. I also wanted to learn Rust. :crab:
+        </sup>
+    </li>
+    <li>
+        <sup>
+          Did you know that I pledged to not listen to music (within sanity, like testing) until I got this project done? It was hard!
+        </sup>
+    </li>
+</ul>
