@@ -33,9 +33,6 @@ jobs:
       - name: Install TOML
         run: npm install toml
 
-      - name: Install random bullshit
-        run: sudo apt install libssl-dev librust-openssl-dev pkg-config build-essential
-
       - uses: actions-rs/cargo@v1
         with:
           use-cross: true
