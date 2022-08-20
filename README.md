@@ -42,7 +42,7 @@ https://user-images.githubusercontent.com/16274568/185728431-8b87076c-2488-4962-
 ### For OBS users...
 
 1. Follow all of the previous steps.
-2. Add a browser source in OBS. Similarly to `gosumemory`, resolutions are found in the spoiler below.
+2. Add a browser source in OBS. Themes and resolutions are found in the [themes repository](https://www.github.com/Nowaaru/spotify-np).
 3. Set the browser source URL to `localhost:1273` - or whatever alternative you've set it to.
 
 -   **DO. NOT. AND I REPEAT. DO NOT** tick the following fields:
@@ -51,19 +51,7 @@ https://user-images.githubusercontent.com/16274568/185728431-8b87076c-2488-4962-
     -   Why?
         -   It's because of a limitation in `spotify_info`. Initially, the website is uninitialized (it should be, depends on your theme) because `spotify_info` - and subsequently my application - does not send an initial message to indicate what track is being played. Therefore, if you allow OBS to shutdown or refresh the source and by extension refreshing the page, anytime OBS deems that it should do its tomfoolery to the browser source would cause the entire thing to refresh to its original state - and that's not good for user experience.
 
-4. And you're done! Get streaming, have fun and **don't stream too much copyrighted music!**
-
-<details>
-    <summary>Included Themes</summary>
-    
-    <h2> default </h2>
-    <img src=https://user-images.githubusercontent.com/16274568/185761257-0e48f397-ae7a-41e7-b221-f608c465061c.png />
-    
-    <h2> bar </h2>
-    <img src=https://user-images.githubusercontent.com/16274568/185761196-a9e15296-5b02-4b8a-9732-c9e610877473.png />
-    
-</details>
-<br />
+4. And you're done! Get streaming, have fun and **don't stream too much copyrighted music!** 
 
 ## Like what I do?
 
