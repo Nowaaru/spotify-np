@@ -15,11 +15,6 @@ jobs:
           - x86_64-unknown-linux-gnu	
           - aarch64-unknown-linux-gnu	
     steps:
-      - name: Cancel Running Workflows
-        uses: everphone-gmbh/cancel-previous-workflows@v5
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
-
       - name: Checkout        
         uses: actions/checkout@v3
 
