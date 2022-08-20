@@ -80,6 +80,8 @@ async fn ws_sendmessage(ws: &mut WebSocket, msg: String) -> Result<(), AppError>
 #[tokio::main]
 async fn main() {
     // setup filesystem dir n stuffs.
+    println!("{}{}", "spotify-np v".cyan().bold(), env!("CARGO_PKG_VERSION").cyan().bold());
+
     let base = Path::new("./");
     let themes = base.join(Path::new("themes"));
     let cfg = base.join(Path::new("config.json"));
@@ -133,9 +135,11 @@ async fn main() {
         eprintln!("{} errors_ws is set to false, this is dangerous! if anything goes wrong, please be sure to {} before making an issue/pr!", "!".red(), "turn this field back to true".yellow());
     }
 
-    if !no_ws {
-        eprintln!("{} no_ws is set to false. not starting the webserver this run.", "!".red());
+    if no_ws {
+        eprintln!("{} no_ws is set to true. not starting the webserver this run.", "!".red());
     }
+
+    println!(); // newline
 
     // Check if the theme they're looking for exists. If not, throw an error.
     let theme_path = themes.join(Path::new(&theme));
@@ -150,7 +154,7 @@ async fn main() {
     let (tx, _rx) = tokio::sync::broadcast::channel::<String>(24);
     let tx2 = tx.clone();
     tokio::spawn(async move {
-        println!("Starting main server...");
+        println!("Starting {} server...", "main".cyan().bold());
         warp::serve(server)
             .run(SocketAddr::new(
                 IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1)),
@@ -257,7 +261,7 @@ async fn main() {
                 })
             });
 
-        println!("Starting websocket server...");
+        println!("Starting {} server...", "websocket".cyan().bold());
         warp::serve(routes).run(([127, 0, 0, 1], port_ws)).await;
     }
 }
