@@ -65,7 +65,7 @@ It's an unfortunate case, but two are obligatory and one of them was the simples
     </li>
     <li>
         <sup>
-         I originally made this application because I wanted to stream development of my upcoming (or maybe present, depends on when you're reading) manga reader `suwariyomi.rs`, and I wanted to give credit to artists like _`your best friend jippy`_ whilst keeping everything sleek. I also wanted to learn Rust. :crab:
+         I originally made this application because I wanted to stream development of my upcoming (or maybe present, depends on when you're reading) manga reader `suwariyomi.rs`, and I wanted to give credit to artists like <i>`your best friend jippy`</i> whilst keeping everything sleek. I also wanted to learn Rust. :crab:
         </sup>
     </li>
     <li>
