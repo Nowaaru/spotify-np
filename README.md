@@ -16,8 +16,6 @@ It's an unfortunate case, but two are obligatory and one of them was the simples
 
 ## Usage
 
---
-
 1. As this is program is dependent on Cargo's `spotify_info` crate, head to [this repository](https://github.com/Ricky12Awesome/spotify_info) and follow the instructions to satisfy the Spotify end of the program.
 2. Download the application [here](https://github.com/Nowaaru/spotify-np/releases). Make sure to choose the right .zip for your computer:
     - x86_64-pc-windows-msvc: Windows OS (x64)
