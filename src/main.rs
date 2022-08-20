@@ -4,8 +4,8 @@ use std::{
     path::Path,
 };
 
-use owo_colors::OwoColorize;
 use futures::SinkExt;
+use owo_colors::OwoColorize;
 use spotify_info::{SpotifyEvent, SpotifyListener, TrackState};
 use warp::{
     ws::{Message, WebSocket},
@@ -80,7 +80,11 @@ async fn ws_sendmessage(ws: &mut WebSocket, msg: String) -> Result<(), AppError>
 #[tokio::main]
 async fn main() {
     // setup filesystem dir n stuffs.
-    println!("{}{}", "spotify-np v".cyan().bold(), env!("CARGO_PKG_VERSION").cyan().bold());
+    println!(
+        "{}{}",
+        "spotify-np v".cyan().bold(),
+        env!("CARGO_PKG_VERSION").cyan().bold()
+    );
 
     let base = Path::new("./");
     let themes = base.join(Path::new("themes"));
@@ -136,7 +140,10 @@ async fn main() {
     }
 
     if no_ws {
-        eprintln!("{} no_ws is set to true. not starting the webserver this run.", "!".red());
+        eprintln!(
+            "{} no_ws is set to true. not starting the webserver this run.",
+            "!".red()
+        );
     }
 
     println!(); // newline
