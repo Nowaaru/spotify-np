@@ -4,6 +4,7 @@ use std::{
     path::Path,
 };
 
+use owo_colors::OwoColorize;
 use futures::SinkExt;
 use spotify_info::{SpotifyEvent, SpotifyListener, TrackState};
 use warp::{
@@ -88,6 +89,7 @@ async fn main() {
         "port_sv": "1273",
         "port_ws": "1274",
         "errors_ws": false,
+        "no_ws": false,
     });
 
     std::fs::create_dir_all(&themes).unwrap();
@@ -121,9 +123,18 @@ async fn main() {
             .unwrap_or_else(|_| get_field_from_cfg(&cfg_defaults, "errors_ws").unwrap()),
     );
 
+    let no_ws: bool = extract_value_bool(
+        &get_field_from_cfg(&app_config, "no_ws")
+            .unwrap_or_else(|_| get_field_from_cfg(&cfg_defaults, "no_ws").unwrap()),
+    );
+
     // Warn if a dangerous field is used.
     if !errors_ws {
-        eprintln!("! errors_ws is set to false, this is dangerous! if anything goes wrong, please be sure to turn this field back to true before making an issue/pr!");
+        eprintln!("{} errors_ws is set to false, this is dangerous! if anything goes wrong, please be sure to {} before making an issue/pr!", "!".red(), "turn this field back to true".yellow());
+    }
+
+    if !no_ws {
+        eprintln!("{} no_ws is set to false. not starting the webserver this run.", "!".red());
     }
 
     // Check if the theme they're looking for exists. If not, throw an error.
@@ -229,22 +240,24 @@ async fn main() {
         }
     });
 
-    let routes = warp::path::end()
-        .and(warp::ws())
-        .map(move |ws: warp::ws::Ws| {
-            let mut rx = tx2.subscribe();
-            ws.on_upgrade(move |mut websocket| async move {
-                while let Ok(v) = rx.recv().await {
-                    if let Err(e) = ws_sendmessage(&mut websocket, v).await {
-                        if errors_ws {
-                            eprintln!("{}", e);
+    if !no_ws {
+        let routes = warp::path::end()
+            .and(warp::ws())
+            .map(move |ws: warp::ws::Ws| {
+                let mut rx = tx2.subscribe();
+                ws.on_upgrade(move |mut websocket| async move {
+                    while let Ok(v) = rx.recv().await {
+                        if let Err(e) = ws_sendmessage(&mut websocket, v).await {
+                            if errors_ws {
+                                eprintln!("{}", e);
+                            }
+                            break;
                         }
-                        break;
                     }
-                }
-            })
-        });
+                })
+            });
 
-    println!("Starting websocket server...");
-    warp::serve(routes).run(([127, 0, 0, 1], port_ws)).await;
+        println!("Starting websocket server...");
+        warp::serve(routes).run(([127, 0, 0, 1], port_ws)).await;
+    }
 }
