@@ -32,24 +32,21 @@ jobs:
 
       - name: Install TOML
         run: npm install toml
+      
+      - name: Clone from Themes Repository
+        run: git clone https://github.com/Nowaaru/spotify-np-themes.git themes
 
       - name: Build
         run: cargo build --release
 
-      - name: Set ENV
-        run: echo "RELEASE_VERSION=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
-
       - name: Zip Product                 
         uses: vimtor/action-zip@v1
         with:
-          files: README.md target/release/spotify-np.exe package/
+          files: README.md target/release/spotify-np.exe package/ themes/
           dest: ${{ matrix.target }}.zip
           
       - name: Rename artifacts
         run: node .github/scripts/rename.js ${{ matrix.target }}.zip
-
-      - name: "Output after Zip for testing purpsoes."
-        run: dir target/release
 
       - name: Let the dogs out.
         uses: softprops/action-gh-release@v1
