@@ -1,8 +1,10 @@
 ## spotify-np :crab:
 
-![Windows Build Status](https://img.shields.io/github/workflow/status/Nowaaru/spotify-np/Publish%20%28windows%29?style=for-the-badge&label=Windows)
-![MacOS Build Status](https://img.shields.io/github/workflow/status/Nowaaru/spotify-np/Publish%20%28mac%29?style=for-the-badge&label=MacOS)
-![Linux Build Status](https://img.shields.io/github/workflow/status/Nowaaru/spotify-np/Publish%20%28linux%29?style=for-the-badge&label=Linux)
+![Windows Build Status](https://img.shields.io/github/actions/workflow/status/Nowaaru/spotify-np/windows.yml?style=for-the-badge&logo=Windows11&logoColor=%23FCC624&label=Windows%20Build
+)
+![MacOS Build Status](https://img.shields.io/github/actions/workflow/status/Nowaaru/spotify-np/mac.yml?style=for-the-badge&logo=apple&logoColor=%23FCC624&label=MacOS%20Build
+)
+![Linux Build Status](https://img.shields.io/github/actions/workflow/status/Nowaaru/spotify-np/linux.yml?style=for-the-badge&logo=Linux&logoColor=%23FCC624&label=Linux%20Build)
 
 `spotify-np` is a Rust-based local webserver inspired by [l3lackShark](https://github.com/l3lackShark)'s [gosumemory](https://github.com/l3lackShark/gosumemory) application, but the catch is that it's for Spotify! :notes:
 
